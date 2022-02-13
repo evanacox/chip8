@@ -53,8 +53,9 @@ int chip8::entry(std::span<std::string_view> args) noexcept {
   while (display.is_open()) {
     vm.cycle();
 
-    // actually enabling vsync in SFML seems to break everything, but I don't want to be
-    // drawing constantly for no reason
+    // actually enabling vsync in SFML seems to break rendering, but I don't want to be
+    // drawing constantly for no reason. Since I know absolutely nothing about graphics,
+    // I'm manually timing display updates instead
     if (auto now = chrono::system_clock::now(); now >= last + 16666us) {
       last = now;
 
