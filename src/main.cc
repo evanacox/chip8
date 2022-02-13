@@ -20,5 +20,5 @@ int main(int argc, char** argv) {
     args.emplace_back(argv[i]);
   }
 
-  return chip8::entry(args);
+  return chip8::entry({args.begin() + 1, args.end()});
 }

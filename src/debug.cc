@@ -14,12 +14,36 @@
 
 namespace internal = chip8::internal;
 
+namespace chip8 {
+  internal::NewlineOstream::NewlineOstream(std::ostream* os, std::string_view header) noexcept
+      : os_{os},
+        header_{header} {
+    if constexpr (should_log) {
+      *os_ << header_ << " ";
+    }
+  }
+
+  internal::NewlineOstream::~NewlineOstream() {
+    if constexpr (should_log) {
+      *os_ << '\n' << std::flush;
+    }
+  }
+
+  internal::NewlineOstream& internal::NewlineOstream::operator<<(bool value) noexcept {
+    if constexpr (should_log) {
+      *os_ << (value ? "True" : "False");
+    }
+
+    return *this;
+  }
+} // namespace chip8
+
 internal::NewlineOstream chip8::outs() noexcept {
-  return internal::NewlineOstream{&std::cout};
+  return internal::NewlineOstream{&std::cout, "debug: "};
 }
 
 internal::NewlineOstream chip8::errs() noexcept {
-  return internal::NewlineOstream{&std::cerr};
+  return internal::NewlineOstream{&std::cerr, "error: "};
 }
 
 std::ostream& chip8::reg(std::ostream& stream) noexcept {

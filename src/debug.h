@@ -14,11 +14,17 @@
 
 namespace chip8 {
   namespace internal {
+#ifndef NDEBUG
+    inline constexpr bool should_log = false;
+#else
+    inline constexpr bool should_log = false;
+#endif
+
     class NewlineOstream {
     public:
       NewlineOstream() = delete;
 
-      explicit NewlineOstream(std::ostream* os) noexcept : os_{os} {}
+      explicit NewlineOstream(std::ostream* os, std::string_view header) noexcept;
 
       NewlineOstream(const NewlineOstream&) = delete;
 
@@ -28,24 +34,21 @@ namespace chip8 {
 
       NewlineOstream& operator=(NewlineOstream&&) = delete;
 
-      ~NewlineOstream() {
-        *os_ << '\n' << std::flush;
-      }
+      ~NewlineOstream();
 
       template <typename T> NewlineOstream& operator<<(T&& entity) noexcept {
-        *os_ << entity;
+        if constexpr (should_log) {
+          *os_ << entity;
+        }
 
         return *this;
       }
 
-      NewlineOstream& operator<<(bool value) noexcept {
-        *os_ << (value ? "True" : "False");
-
-        return *this;
-      }
+      NewlineOstream& operator<<(bool value) noexcept;
 
     private:
       std::ostream* os_;
+      std::string_view header_;
     };
   } // namespace internal
 
